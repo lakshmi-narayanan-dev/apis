@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Player - Naraine</title>
+
+    <!-- Favicons -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="https://naraine.tech/common-assets/favicon-b/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://naraine.tech/common-assets/favicon-b/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="https://naraine.tech/common-assets/favicon-b/FAVICON/favicon-96x96.png"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://naraine.tech/common-assets/favicon-b/FAVICON/favicon.ico"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://naraine.tech/common-assets/favicon-b/FAVICON/apple-icon-180x180.png"
+    />
+
+    <!-- FontAwesome Css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&family=Space+Mono:wght@400;700&display=swap");
+
+      * {
+        padding: 0;
+        margin: 0;
+        font-family: "Space Mono", monospace;
+        box-sizing: border-box;
+        font-size: 20px;
+        text-transform: lowercase !important;
+        cursor: pointer;
+      }
+
+      body,
+      html {
+        zoom: 1 !important;
+        scroll-behavior: smooth !important;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      .songs-list {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        padding: 6rem 5% 7rem;
+        background-color: #fff;
+      }
+
+      .songs-list div {
+        border: 1px solid #191414;
+        padding: 0.75rem;
+        margin: 0.25%;
+        max-width: 24.5%;
+        min-width: 24.5%;
+        max-height: 5rem;
+        overflow: hidden !important;
+        white-space: nowrap;
+      }
+
+      .songs-list div h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin: 0;
+      }
+
+      .songs-list div:hover h2 {
+        overflow: visible;
+        white-space: nowrap;
+        display: inline-block;
+      }
+
+      /* Marquee animation */
+      @keyframes marquee {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(-100%);
+        }
+      }
+
+      .songs-list div:hover,
+      .songs-list div.selected {
+        background-color: #a2d2ff;
+        font-weight: 900 !important;
+        cursor: pointer;
+      }
+
+      .music-head {
+        text-align: center;
+        background-color: #a2d2ff;
+        padding: 0.5rem;
+        color: #191414;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        max-height: 45px !important;
+        overflow: hidden;
+      }
+
+      .namemusic {
+        min-height: 2.5rem;
+        background-color: #191414;
+        position: fixed;
+        top: 45px;
+        left: 0;
+        width: 100%;
+        color: white;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .music-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 25%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background-color: #46a5ff;
+        width: 100%;
+        z-index: 1000 !important;
+      }
+
+      .fa-pause,
+      .fa-arrow-right-long,
+      .fa-volume-xmark {
+        display: none; /* Hide pause, no loop, and mute icons by default */
+      }
+
+      .hidden {
+        display: none; /* Class to hide elements */
+      }
+
+      /* Add styling for active shuffle mode */
+      #shuffle {
+        cursor: pointer;
+        color: #191414; /* Default color */
+      }
+
+      #shuffle.active {
+        color: #ffffff; /* Highlight color for active shuffle */
+      }
+
+      .play-pause {
+        display: flex;
+        background-color: white;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        border-radius: 50%;
+      }
+
+      .music-mute {
+        color: white !important;
+      }
+
+      .progress-music {
+        min-height: 1rem;
+        background-color: #000000;
+        position: fixed;
+        bottom: 64px;
+        max-width: 100%;
+        min-width: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 0;
+      }
+
+      .progress-music input {
+        min-width: 90%;
+        -webkit-appearance: none;
+        appearance: none;
+        padding: 0;
+        outline: none; /* Remove outline */
+        border-radius: 0px; /* Round edges */
+        cursor: pointer; /* Pointer cursor */
+        background-color: rgb(110, 97, 97);
+      }
+
+      .progress-music input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px; /* Width of the thumb */
+        height: 8px; /* Height of the thumb */
+        background: #fff; /* Thumb color */
+        border: none;
+        border-radius: 0; /* Round thumb */
+        cursor: pointer; /* Pointer cursor */
+      }
+
+      @media screen and (max-width: 1200px) {
+        .songs-list div {
+          min-width: 100%;
+          max-width: 100%;
+          margin: 0.25rem 0;
+        }
+
+        .namemusic {
+          overflow: hidden !important;
+          white-space: nowrap;
+        }
+
+        .namemusic h2 {
+          overflow: visible;
+          animation: marquee 10s linear infinite;
+          white-space: nowrap;
+          display: inline-block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="music-head">
+      <h2>naraine MUSiC player</h2>
+    </div>
+
+    <!-- Song List -->
+    <div class="songs-list"></div>
+
+    <!-- Name of the song currently playing -->
+    <div class="namemusic">
+      <h2>Song Name</h2>
+    </div>
+
+    <!-- Progress -->
+    <!-- input range -->
+    <div class="progress-music">
+      <input
+        type="range"
+        id="progressBar"
+        value="0"
+        step="1"
+        min="0"
+        max="100"
+      />
+    </div>
+
+    <!-- Music Controls -->
+    <div class="music-controls">
+      <div id="mute-unmute" class="mute-unmute">
+        <i class="fa-solid fa-music"></i>
+        <i class="fa-solid fa-volume-xmark"></i>
+      </div>
+
+      <div class="back" aria-label="Previous Song">
+        <i class="fa-solid fa-backward"></i>
+      </div>
+
+      <div id="play-pause" class="play-pause" aria-label="Play/Pause" disabled>
+        <i class="fa-solid fa-play"></i>
+        <i class="fa-solid fa-pause"></i>
+      </div>
+
+      <div class="forward" aria-label="Next Song">
+        <i class="fa-solid fa-forward"></i>
+      </div>
+
+      <!-- Add the shuffle button -->
+      <div id="shuffle" class="shuffle" aria-label="Shuffle">
+        <i class="fa-solid fa-random"></i>
+      </div>
+    </div>
+
+    <!-- Mp3 song -->
+    <!-- Audio tag for mp3, which should be hidden -->
+    <audio id="audioPlayer" controls style="display: none"></audio>
+
+    <!-- Font Awesome Js -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // First load the page to run the function
+      document.addEventListener("DOMContentLoaded", function () {
+        // Fetch and sort the songs list
+
+        // Any Api json list go with fetch catch method
+        fetch("listSongs.php")
+          // if it got fetched , response into json format
+          .then((response) => response.json())
+
+          // How to sort the json data
+          // To sort all the retrieved json data
+          .then((data) => {
+            // SortedSongs is a variable
+            const sortedSongs = data.sort((a, b) => {
+              const nameA = a.split("/").pop();
+              const nameB = b.split("/").pop();
+              return nameA.localeCompare(nameB, undefined, { numeric: true });
+            });
+
+            console.log(sortedSongs);
+
+            // Getting Song list container, Audio html, Progress Html, Current Song
+            const songListContainer = document.querySelector(".songs-list");
+            const audioPlayer = document.getElementById("audioPlayer");
+            const progressBar = document.getElementById("progressBar");
+
+            let currentSongIndex = 0;
+            let shuffleMode = false;
+
+            // Disable the play button initially
+            // Buttons Initial States
+            const playPauseButton = document.getElementById("play-pause");
+            playPauseButton.querySelector(".fa-play").style.opacity = ".5";
+            playPauseButton.querySelector(".fa-pause").style.display = "none";
+
+            // For random Color Generate for bg
+            function getRandomLightColor() {
+              const r = Math.floor(Math.random() * 128 + 127);
+              const g = Math.floor(Math.random() * 128 + 127);
+              const b = Math.floor(Math.random() * 128 + 127);
+              return `rgb(${r}, ${g}, ${b})`;
+            }
+
+            // Display songs and set up click event to play song
+            sortedSongs.forEach((song, index) => {
+              const songItemContainer = document.createElement("div");
+              const songTitle = document.createElement("h2");
+
+              const songName = song.split("/").pop();
+              // const songName = song;
+
+              songTitle.textContent = `${index + 1} - ${songName}`;
+              songItemContainer.appendChild(songTitle);
+
+              // Click to play selected song
+              songItemContainer.addEventListener("click", () => {
+                currentSongIndex = index; // Set currentSongIndex to clicked song's index
+                playSongAtIndex(currentSongIndex);
+              });
+
+              songListContainer.appendChild(songItemContainer);
+            });
+
+            // Function to play song at a specific index
+            function playSongAtIndex(index) {
+              const songName = sortedSongs[index].split("/").pop();
+              document.querySelector(".namemusic > h2").textContent = songName;
+              audioPlayer.src = sortedSongs[index];
+              audioPlayer.play();
+              playPauseButton.querySelector(".fa-play").style.display = "none";
+              playPauseButton.querySelector(".fa-pause").style.display =
+                "block";
+              playPauseButton.disabled = false;
+
+              // Highlight selected song
+              document
+                .querySelectorAll(".songs-list div")
+                .forEach((item) => item.classList.remove("selected"));
+              document
+                .querySelectorAll(".songs-list div")
+                [index].classList.add("selected");
+
+              // Change background color of music head
+              document.querySelector(".music-head").style.backgroundColor =
+                getRandomLightColor();
+            }
+
+            // Play/Pause functionality
+            playPauseButton.addEventListener("click", () => {
+              if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseButton.querySelector(".fa-play").style.display =
+                  "none";
+                playPauseButton.querySelector(".fa-pause").style.display =
+                  "block";
+              } else {
+                audioPlayer.pause();
+                playPauseButton.querySelector(".fa-play").style.display =
+                  "block";
+                playPauseButton.querySelector(".fa-play").style.opacity = "1";
+
+                playPauseButton.querySelector(".fa-pause").style.display =
+                  "none";
+              }
+            });
+
+            // Previous Song
+            const backButton = document.querySelector(".back");
+            backButton.addEventListener("click", () => {
+              if (currentSongIndex > 0) {
+                playSongAtIndex(--currentSongIndex);
+              }
+            });
+
+            // Next Song
+            const forwardButton = document.querySelector(".forward");
+            forwardButton.addEventListener("click", () => {
+              if (shuffleMode) {
+                currentSongIndex = Math.floor(
+                  Math.random() * sortedSongs.length
+                );
+              } else {
+                currentSongIndex = (currentSongIndex + 1) % sortedSongs.length;
+              }
+              playSongAtIndex(currentSongIndex);
+            });
+
+            // Mute/Unmute
+            const muteButton = document.getElementById("mute-unmute");
+            muteButton.addEventListener("click", () => {
+              audioPlayer.muted = !audioPlayer.muted;
+              muteButton
+                .querySelector(".fa-music")
+                .classList.toggle("music-mute");
+              muteButton
+                .querySelector(".fa-volume-xmark")
+                .classList.toggle("music-mute");
+            });
+
+            // Shuffle toggle
+            const shuffleButton = document.getElementById("shuffle");
+            shuffleButton.addEventListener("click", () => {
+              shuffleMode = !shuffleMode;
+              shuffleButton.classList.toggle("active");
+            });
+
+            // Listen for audio ended event
+            audioPlayer.addEventListener("ended", () => {
+              if (shuffleMode) {
+                currentSongIndex = Math.floor(
+                  Math.random() * sortedSongs.length
+                );
+              } else {
+                currentSongIndex = (currentSongIndex + 1) % sortedSongs.length;
+              }
+              playSongAtIndex(currentSongIndex);
+            });
+
+            // Update the progress bar as the song plays
+            audioPlayer.addEventListener("timeupdate", () => {
+              const percent =
+                (audioPlayer.currentTime / audioPlayer.duration) * 100;
+              progressBar.value = percent || 0;
+            });
+
+            // Seek to a new position in the song when the progress bar is clicked
+            progressBar.addEventListener("input", () => {
+              const seekTime = (progressBar.value / 100) * audioPlayer.duration;
+              audioPlayer.currentTime = seekTime;
+            });
+          })
+          .catch((errors) => {
+            console.error("Error fetching songs:", errors);
+          });
+      });
+    </script>
+  </body>
+</html>
