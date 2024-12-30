@@ -10,5 +10,5 @@ paste the folder inside htdocs
 sudo /opt/lampp/lampp start
 open browser => http://localhost/folder_name
 
-# change ui accordingly.
-# happy learning
+## change ui accordingly.
+## happy learning
