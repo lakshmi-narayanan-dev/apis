@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <!--	<meta http-equiv="refresh" content="0; URL='https://naraine.tech/mp/loading.html'" /> -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Player - Naraine</title>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="16x16" href="https://naraine.tech/assets/favicon-b/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="https://naraine.tech/assets/favicon-b/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="96x96"
+    href="https://naraine.tech/assets/favicon-b/FAVICON/favicon-96x96.png" />
+  <link rel="shortcut icon" href="https://naraine.tech/assets/favicon-b/FAVICON/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180"
+    href="https://naraine.tech/assets/favicon-b/FAVICON/apple-icon-180x180.png" />
+
+  <!-- FontAwesome Css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    crossorigin="anonymous" />
+
+  <meta name="theme-color" content="#f9ea5f" />
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&family=Space+Mono:wght@400;700&display=swap");
+
+    @font-face {
+      font-family: Gotham;
+      src: url('https://naraine.tech/assets/fonts/Gotham/GothamCond-Black.woff2') format('woff2');
+      font-display: swap;
+    }
+
+    * {
+      padding: 0;
+      margin: 0;
+      // font-family: "Space Mono", monospace;
+      font-family: Gotham !important;
+      box-sizing: border-box;
+      font-size: 20px;
+      text-transform: uppercase !important;
+    }
+
+    body,
+    html {
+      zoom: 1 !important;
+      scroll-behavior: smooth !important;
+      max-width: 100%;
+      overflow-x: hidden;
+      transition: none !important;
+    }
+
+    body {
+      background: #050301;
+      background-size: cover;
+      min-height: 100vh;
+    }
+
+    .songs-list {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      padding: 7rem 2.5% 7.5rem;
+      transition: all 0s ease !important;
+    }
+
+    .songs-list div {
+      border: 1px solid #ffffff;
+      padding: 0.5rem 0.75rem;
+      margin: 0.15%;
+      max-width: 24.7%;
+      min-width: 24.7%;
+      max-height: 5rem;
+      overflow: hidden !important;
+      white-space: nowrap;
+      transition: all 0.5s ease !important;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .songs-list div h2 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 0;
+      font-weight: 200 !important;
+      color: white;
+    }
+
+    /* Marquee animation */
+    @keyframes marquee {
+      from {
+        transform: translateX(100%);
+      }
+
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    .songs-list div:hover,
+    .songs-list div.selected {
+      background-color: #ffffff;
+      font-weight: 900 !important;
+      cursor: pointer;
+    }
+
+    .songs-list div:hover h2,
+    .songs-list div.selected h2 {
+      font-weight: 900 !important;
+      color: black !important;
+    }
+
+    .music-head {
+      text-align: center;
+      background-color: #a2d2ff;
+      padding: 0.5rem;
+      color: #000000;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      min-height: 60px !important;
+      max-height: 60px !important;
+      overflow: hidden;
+    }
+
+    .music-head h2 {
+      font-size: 1.5rem;
+    }
+
+    .namemusic {
+      min-height: 3rem;
+      background-color: #191414;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      color: white;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid grey;
+    }
+
+    .namemusic h2 {
+      font-size: 1.5rem;
+    }
+
+    .music-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 35%;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      background-color: #ffffff;
+      width: 100%;
+      z-index: 1000 !important;
+    }
+
+    .music-controls * {
+      font-size: 1.1rem;
+    }
+
+    .fa-pause,
+    .fa-arrow-right-long,
+    .fa-volume-xmark {
+      display: none;
+      /* Hide pause, no loop, and mute icons by default */
+    }
+
+    .hidden {
+      display: none;
+      /* Class to hide elements */
+    }
+
+    /* Add styling for active shuffle mode */
+    #shuffle {
+      cursor: pointer;
+      color: #000000;
+      /* Default color */
+    }
+
+    #shuffle.active {
+      color: #00995c;
+      /* Highlight color for active shuffle */
+    }
+
+    .play-pause {
+      display: flex;
+      background-color: white;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      border-radius: 50%;
+      border: 3px solid black;
+    }
+
+    .music-mute {
+      color: red !important;
+    }
+
+    .progress-music {
+      min-height: 1rem;
+      background-color: #000000;
+      position: fixed;
+      bottom: 64px;
+      max-width: 100%;
+      min-width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 0;
+      border-top: 1px solid grey;
+    }
+
+    .progress-music input {
+      min-width: 95%;
+      -webkit-appearance: none;
+      appearance: none;
+      padding: 0;
+      outline: none;
+      /* Remove outline */
+      border-radius: 0px;
+      /* Round edges */
+      cursor: pointer;
+      /* Pointer cursor */
+      background-color: grey;
+      height: 5px;
+      overflow: hidden;
+    }
+
+    .progress-music input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      /* Width of the thumb */
+      height: 5px;
+      /* Height of the thumb */
+      background: #fff;
+      /* Thumb color */
+      border: none;
+      border-radius: 0;
+      /* Round thumb */
+      cursor: pointer;
+      /* Pointer cursor */
+    }
+
+    .terms-01 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: .7rem;
+      position: fixed;
+      left: 0;
+      top: 75%;
+      background: red;
+    }
+
+    .terms-01 a {
+      text-decoration: none;
+      color: black;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+
+    @media screen and (max-width: 800px) {
+      .songs-list div {
+        min-width: 100%;
+        max-width: 100%;
+        margin: 0.25rem 0;
+      }
+
+      .namemusic {
+        overflow: hidden !important;
+        white-space: nowrap;
+      }
+
+      .music-controls {
+        padding: 0.6rem 5%;
+      }
+
+      .namemusic h2 {
+        overflow: visible;
+        animation: marquee 20s linear infinite;
+        white-space: nowrap;
+        display: inline-block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="music-head">
+    <h2>naraine MUSiC player</h2>
+  </div>
+
+  <div class="terms-01">
+    <a href="https://naraine.tech/relax/terms.html" target="_blank" />TERMS</a>
+  </div>
+
+  <!-- Song List -->
+  <div class="songs-list"></div>
+
+  <!-- Name of the song currently playing -->
+  <div class="namemusic">
+    <h2>Song Name</h2>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-music">
+    <input type="range" id="progressBar" value="0" step="1" min="0" max="100" />
+  </div>
+
+  <!-- Music Controls -->
+  <div class="music-controls">
+    <div id="mute-unmute" class="mute-unmute">
+      <i class="fa-solid fa-music"></i>
+      <i class="fa-solid fa-volume-xmark"></i>
+    </div>
+
+    <div class="back" aria-label="Previous Song">
+      <i class="fa-solid fa-backward"></i>
+    </div>
+
+    <div id="play-pause" class="play-pause" aria-label="Play/Pause" disabled>
+      <i class="fa-solid fa-play"></i>
+      <i class="fa-solid fa-pause"></i>
+    </div>
+
+    <div class="forward" aria-label="Next Song">
+      <i class="fa-solid fa-forward"></i>
+    </div>
+
+    <!-- Add the shuffle button -->
+    <div id="shuffle" class="shuffle active" aria-label="Shuffle">
+      <i class="fa-solid fa-random"></i>
+    </div>
+  </div>
+
+  <!-- Mp3 song -->
+  <audio id="audioPlayer" controls style="display: none"></audio>
+
+  <!-- Font Awesome Js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"
+    crossorigin="anonymous"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Fetch and sort the songs list
+      fetch("listSongs.php")
+        .then((response) => response.json())
+        .then((data) => {
+          const sortedSongs = data.sort((a, b) => {
+            const nameA = a.split("/").pop();
+            const nameB = b.split("/").pop();
+            return nameA.localeCompare(nameB, undefined, { numeric: true });
+          });
+
+          const songListContainer = document.querySelector(".songs-list");
+          const audioPlayer = document.getElementById("audioPlayer");
+          const progressBar = document.getElementById("progressBar");
+          let currentSongIndex = 0;
+          let shuffleMode = true;
+
+          // Disable the play button initially
+          const playPauseButton = document.getElementById("play-pause");
+          playPauseButton.querySelector(".fa-play").style.opacity = "1";
+          playPauseButton.querySelector(".fa-pause").style.display = "none";
+
+          function getRandomLightColor() {
+            const r = Math.floor(Math.random() * 128 + 127);
+            const g = Math.floor(Math.random() * 128 + 127);
+            const b = Math.floor(Math.random() * 128 + 127);
+            return `rgb(${r}, ${g}, ${b})`;
+          }
+
+          // Display songs and set up click event to play song
+          sortedSongs.forEach((song, index) => {
+            const songItemContainer = document.createElement("div");
+            const songTitle = document.createElement("h2");
+
+            const songName = song.split("/").pop().replace(/\.mp3$/i, "");
+            songTitle.textContent = `${index + 1}. ${songName}`;
+            songItemContainer.appendChild(songTitle);
+
+            // Click to play selected song
+            songItemContainer.addEventListener("click", () => {
+              currentSongIndex = index; // Set currentSongIndex to clicked song's index
+              playSongAtIndex(currentSongIndex);
+            });
+
+            songListContainer.appendChild(songItemContainer);
+          });
+
+          // Function to play song at a specific index
+          function playSongAtIndex(index) {
+            const songName = sortedSongs[index].split("/").pop().replace(/\.mp3$/i, "");
+            document.querySelector(".namemusic > h2").textContent = songName;
+            audioPlayer.src = sortedSongs[index];
+            audioPlayer.play();
+            playPauseButton.querySelector(".fa-play").style.display = "none";
+            playPauseButton.querySelector(".fa-pause").style.display =
+              "block";
+            playPauseButton.disabled = false;
+
+            // Highlight selected song
+            document
+              .querySelectorAll(".songs-list div")
+              .forEach((item) => item.classList.remove("selected"));
+            document
+              .querySelectorAll(".songs-list div")
+            [index].classList.add("selected");
+
+            // Change background color of music head
+            document.querySelector(".music-head").style.backgroundColor =
+              getRandomLightColor();
+          }
+
+          // Play/Pause functionality
+          playPauseButton.addEventListener("click", () => {
+            if (audioPlayer.paused) {
+              audioPlayer.play();
+              playPauseButton.querySelector(".fa-play").style.display =
+                "none";
+              playPauseButton.querySelector(".fa-pause").style.display =
+                "block";
+            } else {
+              audioPlayer.pause();
+              playPauseButton.querySelector(".fa-play").style.display =
+                "block";
+              playPauseButton.querySelector(".fa-pause").style.display =
+                "none";
+            }
+          });
+
+          // Previous Song
+          const backButton = document.querySelector(".back");
+          backButton.addEventListener("click", (blink) => {
+            blink.preventDefault();
+            if (shuffleMode) {
+              let previousIndex;
+              do {
+                previousIndex = Math.floor(
+                  Math.random() * sortedSongs.length
+                );
+              } while (previousIndex === currentSongIndex); // Ensure it's not the current song
+              currentSongIndex = previousIndex;
+            } else {
+              if (currentSongIndex > 0) {
+                currentSongIndex--;
+              } else {
+                currentSongIndex = sortedSongs.length - 1; // Loop back to the last song
+              }
+            }
+            playSongAtIndex(currentSongIndex);
+          });
+
+          // Next Song
+          const forwardButton = document.querySelector(".forward");
+          forwardButton.addEventListener("click", (blink) => {
+            blink.preventDefault();
+            if (shuffleMode) {
+              currentSongIndex = Math.floor(
+                Math.random() * sortedSongs.length
+              );
+            } else {
+              currentSongIndex = (currentSongIndex + 1) % sortedSongs.length;
+            }
+            playSongAtIndex(currentSongIndex);
+          });
+
+          // Mute/Unmute
+          const muteButton = document.getElementById("mute-unmute");
+          muteButton.addEventListener("click", (blink) => {
+            blink.preventDefault();
+            audioPlayer.muted = !audioPlayer.muted;
+            muteButton
+              .querySelector(".fa-music")
+              .classList.toggle("music-mute");
+            muteButton
+              .querySelector(".fa-volume-xmark")
+              .classList.toggle("music-mute");
+          });
+
+          // Shuffle toggle
+          const shuffleButton = document.getElementById("shuffle");
+          shuffleButton.addEventListener("click", (blink) => {
+            blink.preventDefault();
+            shuffleMode = !shuffleMode;
+            shuffleButton.classList.toggle("active");
+          });
+
+          // Listen for audio ended event
+          audioPlayer.addEventListener("ended", (blink) => {
+            blink.preventDefault();
+            if (shuffleMode) {
+              currentSongIndex = Math.floor(
+                Math.random() * sortedSongs.length
+              );
+            } else {
+              currentSongIndex = (currentSongIndex + 1) % sortedSongs.length;
+            }
+            playSongAtIndex(currentSongIndex);
+          });
+
+          // Update the progress bar as the song plays
+          audioPlayer.addEventListener("timeupdate", (blink) => {
+            blink.preventDefault();
+            const percent =
+              (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressBar.value = percent || 0;
+          });
+
+          // Seek to a new position in the song when the progress bar is clicked
+          progressBar.addEventListener("input", (blink) => {
+            blink.preventDefault();
+            const seekTime = (progressBar.value / 100) * audioPlayer.duration;
+            audioPlayer.currentTime = seekTime;
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching songs:", error);
+        });
+    });
+  </script>
+</body>
+
+</html>
