@@ -7,40 +7,34 @@
   <!--	<meta http-equiv="refresh" content="0; URL='https://naraine.tech/mp/loading.html'" /> -->
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Music Player - Naraine</title>
+  <title>Listen In Heaven</title>
 
   <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="16x16" href="https://naraine.tech/assets/favicon-b/favicon-16x16.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="https://naraine.tech/assets/favicon-b/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="96x96"
-    href="https://naraine.tech/assets/favicon-b/FAVICON/favicon-96x96.png" />
-  <link rel="shortcut icon" href="https://naraine.tech/assets/favicon-b/FAVICON/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180"
-    href="https://naraine.tech/assets/favicon-b/FAVICON/apple-icon-180x180.png" />
+  <link rel="shortcut icon" href="./favicon.ico" />
+
 
   <!-- FontAwesome Css -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     crossorigin="anonymous" />
 
-  <meta name="theme-color" content="#f9ea5f" />
+  <meta name="theme-color" content="#009739" />
 
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&family=Space+Mono:wght@400;700&display=swap");
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
 
-    @font-face {
-      font-family: Gotham;
-      src: url('https://naraine.tech/assets/fonts/Gotham/GothamCond-Black.woff2') format('woff2');
-      font-display: swap;
+    ::selection {
+      color: rgb(0, 0, 0);
+      background-color: rgb(255, 255, 255);
     }
+
 
     * {
       padding: 0;
       margin: 0;
-      // font-family: "Space Mono", monospace;
-      font-family: Gotham !important;
+      font-family: "Space Grotesk", serif !important;
       box-sizing: border-box;
-      font-size: 20px;
-      text-transform: uppercase !important;
+      font-size: 16px;
+      text-transform: lowercase !important;
     }
 
     body,
@@ -69,16 +63,20 @@
 
     .songs-list div {
       border: 1px solid #ffffff;
-      padding: 0.5rem 0.75rem;
+      padding: 0 1rem;
       margin: 0.15%;
-      max-width: 24.7%;
-      min-width: 24.7%;
-      max-height: 5rem;
+      max-width: 16.3%;
+      min-width: 16.3%;
+      max-height: 3rem;
+      min-height: 3rem;
       overflow: hidden !important;
       white-space: nowrap;
       transition: all 0.5s ease !important;
       cursor: pointer;
       background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
     }
 
     .songs-list div h2 {
@@ -86,7 +84,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       margin: 0;
-      font-weight: 200 !important;
+      font-weight: 700 !important;
       color: white;
     }
 
@@ -123,20 +121,23 @@
       width: 100%;
       top: 0;
       left: 0;
-      min-height: 60px !important;
-      max-height: 60px !important;
+      min-height: 50px !important;
+      max-height: 50px !important;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .music-head h2 {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
     }
 
     .namemusic {
       min-height: 3rem;
-      background-color: #191414;
+      background-color: #35be87;
       position: fixed;
-      top: 60px;
+      top: 50px;
       left: 0;
       width: 100%;
       color: white;
@@ -144,11 +145,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-bottom: 1px solid grey;
+      border-top: 1px solid rgb(0, 0, 0);
     }
 
     .namemusic h2 {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
+      color: black;
     }
 
     .music-controls {
@@ -159,13 +161,13 @@
       position: fixed;
       bottom: 0;
       left: 0;
-      background-color: #ffffff;
+      background-color: #fff201;
       width: 100%;
       z-index: 1000 !important;
     }
 
     .music-controls * {
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
     .fa-pause,
@@ -188,7 +190,8 @@
     }
 
     #shuffle.active {
-      color: #00995c;
+      color: red;
+      font-weight: 900 !important;
       /* Highlight color for active shuffle */
     }
 
@@ -207,17 +210,17 @@
 
     .progress-music {
       min-height: 1rem;
-      background-color: #000000;
+      background-color: #35be87;
       position: fixed;
-      bottom: 64px;
+      bottom: 57px;
       max-width: 100%;
       min-width: 100%;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem 0;
-      border-top: 1px solid grey;
+      padding: 1.15rem 0;
+      border-bottom: 1px solid rgb(0, 0, 0);
     }
 
     .progress-music input {
@@ -231,8 +234,8 @@
       /* Round edges */
       cursor: pointer;
       /* Pointer cursor */
-      background-color: grey;
-      height: 5px;
+      background-color: rgb(0, 0, 0);
+      height: 3px;
       overflow: hidden;
     }
 
@@ -243,7 +246,7 @@
       /* Width of the thumb */
       height: 5px;
       /* Height of the thumb */
-      background: #fff;
+      background: #d3dcfa;
       /* Thumb color */
       border: none;
       border-radius: 0;
@@ -259,15 +262,24 @@
       padding: .7rem;
       position: fixed;
       left: 0;
-      top: 75%;
-      background: red;
+      top: 65%;
+      transition: all 1s ease;
+      background: #35be87;
     }
 
     .terms-01 a {
       text-decoration: none;
       color: black;
       font-size: 14px;
-      font-weight: 900;
+      font-weight: 900 !important;
+    }
+
+    @media screen and (max-width: 1300px) {
+
+      .songs-list div {
+        min-width: 24.7%;
+        max-width: 24.7%;
+      }
     }
 
 
@@ -303,7 +315,7 @@
   </div>
 
   <div class="terms-01">
-    <a href="https://naraine.tech/relax/terms.html" target="_blank" />TERMS</a>
+    <a href="./terms.html" target="_blank" />TERMS</a>
   </div>
 
   <!-- Song List -->
