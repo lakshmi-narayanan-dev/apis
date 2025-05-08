@@ -5,7 +5,7 @@ $directory = "list/";
 // Find all MP3 files in the directory
 $songs = glob($directory . "*.mp3");
 
-// Check if any songs are available
+// Check if any songs are available or not
 if ($songs) {
   // Output the array of song paths as a JSON object
   echo json_encode($songs);
